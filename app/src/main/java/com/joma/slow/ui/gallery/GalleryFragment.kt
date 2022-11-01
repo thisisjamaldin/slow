@@ -1,21 +1,26 @@
 package com.joma.slow.ui.gallery
 
-import android.database.Cursor
-import android.net.Uri
+import android.content.ContentResolver
+import android.content.ContentUris
+import android.content.Context
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Size
 import android.view.View
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.GridLayoutManager
 import com.joma.slow.base.BaseFragment
 import com.joma.slow.databinding.FragmentGalleryBinding
+import com.joma.slow.model.MVideo
 import com.joma.slow.ui.utils.AdapterListener
-import java.io.File
+import java.io.IOException
 
-class GalleryFragment: BaseFragment<FragmentGalleryBinding>(FragmentGalleryBinding::inflate),
+
+class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBinding::inflate),
     AdapterListener {
 
-    lateinit var adapter: GalleryAdapter
+    private lateinit var adapter: GalleryAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -23,37 +28,40 @@ class GalleryFragment: BaseFragment<FragmentGalleryBinding>(FragmentGalleryBindi
         binding.recycler.adapter = adapter
         binding.recycler.layoutManager = GridLayoutManager(requireContext(), 3)
         adapter.setList(getAllMedia())
+        binding.back.setOnClickListener {
+            controller.navigateUp()
+        }
     }
 
-    fun getAllMedia(): ArrayList<Uri> {
-        val videoItemHashSet: HashSet<Uri> = HashSet()
-        val projection = arrayOf(
-            MediaStore.Video.VideoColumns.DATA,
-            MediaStore.Video.Media.DISPLAY_NAME
-        )
-        val cursor: Cursor? = requireActivity().contentResolver.query(
-            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-            projection,
-            null,
-            null,
-            null
-        )
-        try {
-            cursor?.moveToFirst()
-            var count = 100000
+    fun getAllMedia(): List<MVideo> {
+        val videoItems: MutableList<MVideo> = ArrayList()
+        val contentResolver: ContentResolver = context?.contentResolver!!
+        val uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+
+        val cursor = contentResolver.query(uri, null, null, null, null)
+
+        if (cursor != null && cursor.moveToFirst()) {
             do {
-                cursor?.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA))
-                    ?.let {
-                        val file = File.createTempFile("$count", ".mp4", requireContext().cacheDir)
-                        videoItemHashSet.add(file.toUri())
-                        count++
-                    }
-            } while (cursor?.moveToNext() == true)
-            cursor?.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
+                val contentUri = ContentUris.withAppendedId(
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID))
+                )
+                var vimage: Bitmap? = null
+                var duration = ""
+                val retriever = MediaMetadataRetriever()
+                try {
+                    retriever.setDataSource(requireContext(), contentUri)
+                    duration =
+                        retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!
+                    vimage = retriever.getFrameAtTime(0)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                val videoModel = MVideo(contentUri, vimage, duration)
+                videoItems.add(videoModel)
+            } while (cursor.moveToNext())
         }
-        return ArrayList(videoItemHashSet)
+        return videoItems
     }
 
     override fun click(pos: Int) {

@@ -9,6 +9,7 @@
     <color name="red">#ED6D54</color>
     <color name="purple">#6437E3</color>
     <color name="green">#26DF9C</color>
+    <color name="dark_grey">#121212</color>
     <color name="transparent_grey">#80787978</color>
     <color name="transparent">#00000000</color>
 </resources>
