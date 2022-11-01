@@ -5,75 +5,158 @@
     android:padding="12dp"
     android:layout_height="match_parent">
 
-    <VideoView
-        android:id="@+id/video"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/play"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/play"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="12dp"
-        android:background="@drawable/bg_circle"
-        android:src="@drawable/ic_play"
-        android:padding="12dp"
-        app:layout_constraintBottom_toTopOf="@id/preview"/>
-    <TextView
-        android:id="@+id/duration"
-        android:layout_marginBottom="12dp"
+    <Button
+        android:id="@+id/next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="next"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/preview"/>
-
+        app:layout_constraintTop_toTopOf="parent"/>
+<!--    <VideoView-->
+<!--        android:id="@+id/video"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/play"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:layout_marginBottom="12dp"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
     <LinearLayout
         android:id="@+id/preview"
-        android:layout_width="match_parent"
+        app:layout_constraintStart_toEndOf="@id/cut_from"
+        app:layout_constraintEnd_toStartOf="@id/cut_to"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
             android:id="@+id/preview1"
             android:layout_width="0dp"
+            android:scaleType="centerCrop"
             android:layout_height="50dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_slow" />
+            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/preview2"
             android:layout_width="0dp"
+            android:scaleType="centerCrop"
             android:layout_height="50dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_slow" />
+            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/preview3"
             android:layout_width="0dp"
+            android:scaleType="centerCrop"
             android:layout_height="50dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_slow" />
+            android:layout_weight="1"/>
 
         <ImageView
             android:id="@+id/preview4"
             android:layout_width="0dp"
+            android:scaleType="centerCrop"
             android:layout_height="50dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_slow" />
+            android:layout_weight="1"/>
 
         <ImageView
             android:id="@+id/preview5"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_slow" />
-
+            android:scaleType="centerCrop"
+            android:layout_weight="1"/>
     </LinearLayout>
+
+    <com.google.android.exoplayer2.ui.StyledPlayerView
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:show_timeout="0"
+        app:use_controller="false"
+        app:bar_gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/play"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/next"/>
+
+<!--    <com.google.android.exoplayer2.ui.DefaultTimeBar-->
+<!--        android:id="@+id/progress"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginHorizontal="20dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/preview"-->
+<!--        app:layout_constraintTop_toTopOf="@id/preview" />-->
+
+    <ImageView
+        android:id="@+id/play"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="18dp"
+        android:background="@drawable/bg_circle"
+        android:src="@drawable/ic_play"
+        android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@id/preview"/>
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/ic_play"
+        app:layout_constraintBottom_toTopOf="@id/preview"/>
+
+    <TextView
+        android:id="@+id/duration"
+        android:layout_marginBottom="18dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/preview"/>
+
+    <ImageView
+        android:id="@+id/cut_from"
+        android:layout_width="24dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/preview"
+        app:layout_constraintTop_toTopOf="@id/preview"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/ic_cut_from"
+        android:background="@color/white"/>
+
+    <ImageView
+        android:id="@+id/cut_to"
+        android:layout_width="24dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/preview"
+        app:layout_constraintTop_toTopOf="@id/preview"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_cut_to"
+        android:background="@color/white"/>
+
+
+    <com.joma.slow.ui.utils.ProgressSlider
+        android:id="@+id/progress"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:max="200"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        app:layout_constraintStart_toEndOf="@id/cut_from"
+        android:thumb="@drawable/bg_line"
+        app:layout_constraintBottom_toBottomOf="@id/preview"
+        app:layout_constraintEnd_toStartOf="@id/cut_to"
+        app:layout_constraintTop_toTopOf="@id/preview"
+        android:progressBackgroundTint="@color/transparent"
+        android:progressTint="@color/transparent"/>
+
+    <View
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/red"
+        android:layout_width="2dp"
+        android:layout_height="100dp"
+        android:background="@color/red"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,21 +9,192 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Home"
-        android:textColor="@color/black"
+        android:text="@string/home"
+        android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <ImageView
-        android:id="@+id/slow_mo"
+    <LinearLayout
+        android:id="@+id/slow_mo_layout"
         app:layout_constraintTop_toBottomOf="@id/title"
-        android:background="@drawable/bg_blue_gradient"
+        android:background="@drawable/bg_rounded_green"
         android:layout_width="match_parent"
-        android:layout_marginTop="12dp"
-        android:src="@drawable/ic_slow"
-        android:padding="24dp"
-        android:layout_height="140dp"/>
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginTop="18dp"
+        android:layout_height="140dp">
+        <ImageView
+            android:id="@+id/slow_mo_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_slow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <TextView
+            android:id="@+id/slow_mo_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/slow_mo_icon"
+            android:text="Slow motion"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/curve_layout"
+        app:layout_constraintTop_toBottomOf="@id/slow_mo_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/audio_layout"
+        android:background="@drawable/bg_rounded_blue"
+        android:layout_width="0dp"
+        android:gravity="center"
+        android:layout_marginEnd="12dp"
+        android:orientation="vertical"
+        android:layout_marginTop="18dp"
+        android:layout_height="80dp">
+        <ImageView
+            android:id="@+id/curve_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_curve"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <TextView
+            android:id="@+id/curve_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/slow_mo_icon"
+            android:text="Curve"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/audio_layout"
+        app:layout_constraintTop_toBottomOf="@id/slow_mo_layout"
+        app:layout_constraintStart_toEndOf="@id/curve_layout"
+        app:layout_constraintEnd_toStartOf="@id/bg_layout"
+        android:background="@drawable/bg_rounded_red"
+        android:layout_width="0dp"
+        android:gravity="center"
+        android:layout_marginEnd="12dp"
+        android:orientation="vertical"
+        android:layout_marginTop="18dp"
+        android:layout_height="80dp">
+        <ImageView
+            android:id="@+id/audio_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_audio"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <TextView
+            android:id="@+id/audio_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/slow_mo_icon"
+            android:text="Audio Editor"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/bg_layout"
+        app:layout_constraintTop_toBottomOf="@id/slow_mo_layout"
+        app:layout_constraintStart_toEndOf="@id/audio_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/bg_rounded_purple"
+        android:layout_width="0dp"
+        android:gravity="center"
+        android:layout_marginEnd="12dp"
+        android:orientation="vertical"
+        android:layout_marginTop="18dp"
+        android:layout_height="80dp">
+        <ImageView
+            android:id="@+id/bg_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <TextView
+            android:id="@+id/bg_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/slow_mo_icon"
+            android:text="Background"/>
+    </LinearLayout>
+
+
+
+    <ImageView
+        android:id="@+id/settings"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_settings"
+        android:paddingBottom="12dp"
+        android:paddingHorizontal="12dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="2dp"
+        android:textColor="@color/white"
+        android:text="Pro"
+        android:paddingHorizontal="8dp"
+        android:background="@drawable/bg_rounded_blue"
+        app:layout_constraintEnd_toStartOf="@id/settings"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/title"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="2dp"
+        android:textColor="@color/white"
+        android:text="Pro"
+        android:paddingHorizontal="8dp"
+        android:background="@drawable/bg_rounded_blue"
+        app:layout_constraintEnd_toStartOf="@id/settings"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/title"/>
+
+    <TextView
+        android:id="@+id/my_projects"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Projects"
+        app:layout_constraintTop_toBottomOf="@id/curve_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:layout_marginTop="12dp"/>
+
+    <ImageView
+        android:id="@+id/empty_projects"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_empty"
+        app:layout_constraintTop_toBottomOf="@id/my_projects"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

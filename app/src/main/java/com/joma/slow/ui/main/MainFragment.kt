@@ -7,7 +7,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import com.joma.slow.R
 import com.joma.slow.databinding.FragmentMainBinding
-import com.joma.slow.ui.base.BaseFragment
+import com.joma.slow.base.BaseFragment
 
 class MainFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate) {
 
@@ -23,8 +23,9 @@ class MainFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::infla
             }
         }
 
-        binding.slowMo.setOnClickListener {
-            resultLauncher.launch(Intent(Intent.ACTION_GET_CONTENT).setType("video/*"))
+        binding.slowMoLayout.setOnClickListener {
+            controller.navigate(R.id.galleryFragment)
+//            resultLauncher.launch(Intent(Intent.ACTION_GET_CONTENT).setType("video/*"))
         }
 
     }

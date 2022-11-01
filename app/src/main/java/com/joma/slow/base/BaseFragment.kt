@@ -1,4 +1,4 @@
-package com.joma.slow.ui.base
+package com.joma.slow.base
 
 import android.os.Bundle
 import android.view.LayoutInflater

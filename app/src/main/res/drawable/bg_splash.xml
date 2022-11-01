@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:drawable="@drawable/splash" />
+    <item android:drawable="@drawable/tx_slow_motion" android:width="167dp" android:height="24dp" android:gravity="center"/>
+</layer-list>

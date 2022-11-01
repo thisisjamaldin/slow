@@ -15,4 +15,9 @@
         android:name="com.joma.slow.ui.cut.CutFragment"
         android:label="CutFragment"
         tools:layout="@layout/fragment_cut" />
+    <fragment
+        android:id="@+id/galleryFragment"
+        android:name="com.joma.slow.ui.gallery.GalleryFragment"
+        android:label="GalleryFragment"
+        tools:layout="@layout/fragment_gallery" />
 </navigation>

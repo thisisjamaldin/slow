@@ -1,16 +1,22 @@
 package com.joma.slow.ui.cut
 
-import android.content.Intent
-import android.media.MediaPlayer
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
-import android.widget.MediaController
-import androidx.core.net.toUri
-import com.bumptech.glide.Glide
+import android.view.View.OnTouchListener
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.joma.slow.R
 import com.joma.slow.databinding.FragmentCutBinding
-import com.joma.slow.ui.base.BaseFragment
+import com.joma.slow.base.BaseFragment
 import com.joma.slow.ui.utils.VideoUtils
 import java.io.File
 
@@ -19,85 +25,203 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
     VideoUtils.Listener {
 
     lateinit var file: File
-    lateinit var previewFile: File
+    lateinit var uri: Uri
+    var progressHandler = Handler()
+    lateinit var progressRunnable: Runnable
+
+    //slider
+    var fromSliderXDir = 0f
+    var toSliderXDir = 0f
+    var fromSliderDestination = 0f
+    var toSliderDestination = 0f
+    var fromSliderOriginalPos = 0f
+    var toSliderOriginalPos =0f
+    var minSliderValue = 0f
+    var maxSliderValue = 0f
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val uri = Uri.parse(arguments?.getString("uri"))
+        val player = ExoPlayer.Builder(requireContext()).build()
+        binding.video.player = player
 
-        file = File.createTempFile("video", ".mp4", requireContext().cacheDir)
-        previewFile = File.createTempFile("videoP", ".mp4", requireContext().cacheDir)
+        uri = Uri.parse(arguments?.getString("uri"))
 
-        val mp: MediaPlayer = MediaPlayer.create(requireContext(), uri)
-        val duration = mp.duration
-        mp.release()
-        binding.duration.text = "$duration"
+        val progressSeekbarListener = object: OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val seek = progress.toFloat()/200f*player.duration.toFloat()
+                player.seekTo(seek.toLong())
+            }
 
-        VideoUtils.startTrim(
-            requireContext(),
-            uri,
-            file.absolutePath,
-            0,
-            2000,
-            useAudio = true,
-            useVideo = true,
-            listener = this
-        )
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
 
-        var j = 0
-        for (i in 0..duration step duration/5){
-            Log.e("--------$i", "ab")
-            VideoUtils.startTrim(
-                requireContext(),
-                uri,
-                previewFile.absolutePath,
-                i,
-                duration,
-                useAudio = true,
-                useVideo = true,
-                listener = object: VideoUtils.Listener{
-                    override fun onStart2() {
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
 
-                    }
-
-                    override fun onProgress(value: Float) {
-
-                    }
-
-                    override fun onComplete() {
-                        when(j){
-                            0->{
-                                Glide.with(requireContext()).load(previewFile.absolutePath).into(binding.preview1)
-                            }
-                            1->{
-                                Glide.with(requireContext()).load(previewFile.absolutePath).into(binding.preview2)
-                            }
-                            2->{
-                                Glide.with(requireContext()).load(previewFile.absolutePath).into(binding.preview3)
-                            }
-                            3->{
-                                Glide.with(requireContext()).load(previewFile.absolutePath).into(binding.preview4)
-                            }
-                            4->{
-                                Glide.with(requireContext()).load(previewFile.absolutePath).into(binding.preview5)
-                            }
-                        }
-                        j++
-                    }
-
-                    override fun onError(message: String) {
-
-                    }
-
-                }
-            )
         }
 
+        val mediaItem = MediaItem.fromUri(uri)
+        player.setMediaItem(mediaItem)
+        player.prepare()
+        player.addListener(object : Player.Listener{
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                super.onIsPlayingChanged(isPlaying)
+                if (isPlaying){
+                    progressHandler.post(progressRunnable)
+                } else {
+                    progressHandler.removeCallbacks(progressRunnable)
+                }
+            }
+
+            override fun onEvents(player: Player, events: Player.Events) {
+                super.onEvents(player, events)
+                if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)){
+                    binding.loading.visibility = View.VISIBLE
+                }
+                if (events.contains(Player.EVENT_RENDERED_FIRST_FRAME)){
+                    binding.loading.visibility = View.GONE
+                    binding.duration.text = "${player.duration}"
+                }
+//                for (a in 0 until events.size()){
+//                    Log.e("-------${events[a]}", "1")
+//                }
+            }
+        })
+
+        progressRunnable = Runnable {
+            val endSlider = toSliderDestination/(toSliderOriginalPos-(fromSliderOriginalPos + binding.cutFrom.width))*200
+            val progressBar = (player.currentPosition*200/player.duration).toInt()
+            if (progressBar >= endSlider){
+                player.stop()
+                progressHandler.removeCallbacks(progressRunnable)
+                return@Runnable
+            }
+            binding.progress.setOnSeekBarChangeListener(null)
+            binding.progress.progress = progressBar
+            binding.progress.setOnSeekBarChangeListener(progressSeekbarListener)
+            progressHandler.postDelayed(progressRunnable, 10)
+        }
+
+        file = File.createTempFile("video", ".mp4", requireContext().cacheDir)
+
+        binding.video.keepScreenOn = true
+
+        binding.play.setOnClickListener {
+            if (player.isPlaying){
+                player.pause()
+                binding.play.setImageResource(R.drawable.ic_play)
+            } else {
+                player.play()
+                binding.play.setImageResource(R.drawable.ic_pause)
+            }
+        }
+
+        view.viewTreeObserver.addOnGlobalLayoutListener(object: OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                getViewPos()
+                view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
+
+        binding.cutFrom.setOnTouchListener(object: OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                when(event?.action){
+                    MotionEvent.ACTION_DOWN -> {
+                        fromSliderXDir = v?.x?.minus(event.rawX) ?: 0f
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        fromSliderDestination = event.rawX + fromSliderXDir
+                        if (fromSliderDestination > fromSliderOriginalPos && fromSliderDestination < maxSliderValue) {
+                            v?.animate()?.x(fromSliderDestination)?.setDuration(0)?.start()
+                            minSliderValue = fromSliderDestination
+                        }
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        val progress = binding.cutFrom.x/(toSliderOriginalPos-(fromSliderOriginalPos + binding.cutFrom.width))
+                        binding.progress.progress = (progress*200).toInt()
+                        val seek = progress*player.duration.toFloat()
+                        player.seekTo(seek.toLong())
+                    }
+                    else -> return false
+                }
+                return true
+            }
+
+        })
+
+        binding.cutTo.setOnTouchListener(object: OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                when(event?.action){
+                    MotionEvent.ACTION_DOWN -> {
+                        toSliderXDir = v?.x?.minus(event.rawX) ?: 0f
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        toSliderDestination = event.rawX + toSliderXDir
+                        if (toSliderDestination < toSliderOriginalPos && toSliderDestination > minSliderValue) {
+                            v?.animate()?.x(toSliderDestination)?.setDuration(0)?.start()
+                            maxSliderValue = toSliderDestination
+                        }
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        binding.red.x = binding.cutTo.x
+                    }
+                    else -> return false
+                }
+                return true
+            }
+
+        })
+
+        binding.progress.setOnSeekBarChangeListener(progressSeekbarListener)
+
+//        VideoUtils.startTrim(
+//            requireContext(),
+//            uri,
+//            file.absolutePath,
+//            0,
+//            2000,
+//            useAudio = true,
+//            useVideo = true,
+//            listener = this
+//        )
+        getPreview(player.duration*1000)
     }
 
-    private fun getPreview(){
+    private fun getViewPos(){
+        fromSliderOriginalPos = binding.cutFrom.x
+        fromSliderDestination = binding.cutFrom.x
 
+        toSliderOriginalPos = binding.cutTo.x
+        toSliderDestination = toSliderOriginalPos
+
+        maxSliderValue = toSliderOriginalPos
+        minSliderValue = fromSliderOriginalPos
+    }
+
+    private fun getPreview(dur: Long){
+        val retriever = MediaMetadataRetriever()
+        try {
+            retriever.setDataSource(requireContext(), uri)
+            var interval: Long = 0
+            //here 5 means frame at the 5th sec.
+            val bitmap1 = retriever.getFrameAtTime(interval)
+            binding.preview1.setImageBitmap(bitmap1)
+            interval += dur / 5
+            val bitmap2 = retriever.getFrameAtTime(interval)
+            binding.preview2.setImageBitmap(bitmap2)
+            interval += dur / 5
+            val bitmap3 = retriever.getFrameAtTime(interval)
+            binding.preview3.setImageBitmap(bitmap3)
+            interval += dur / 5
+            val bitmap4 = retriever.getFrameAtTime(interval)
+            binding.preview4.setImageBitmap(bitmap4)
+            interval += dur / 5
+            val bitmap5 = retriever.getFrameAtTime(interval)
+            binding.preview5.setImageBitmap(bitmap5)
+        } catch (ex: Exception) {
+            // Assume this is a corrupt video file
+        }
     }
 
     override fun onProgress(value: Float) {
@@ -106,13 +230,10 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
 
     override fun onComplete() {
 //        Toast.makeText(this, "Done!", Toast.LENGTH_SHORT).show()
-        val mediaController = MediaController(requireContext())
-        mediaController.setAnchorView(binding.video)
-        binding.video.setMediaController(mediaController)
-        binding.video.keepScreenOn = true
-        binding.video.setVideoPath(file.absolutePath)
-        binding.video.start()
-        binding.video.requestFocus()
+
+//        binding.video.setVideoPath(file.absolutePath)
+//        binding.video.start()
+//        binding.video.requestFocus()
     }
 
     override fun onStart2() {
