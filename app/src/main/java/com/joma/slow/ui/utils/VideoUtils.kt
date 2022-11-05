@@ -1,20 +1,20 @@
 package com.joma.slow.ui.utils
 
-import android.content.Context
 import android.media.MediaCodec.BufferInfo
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
 import android.media.MediaMuxer
-import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import java.io.File
+import android.util.Log
 import java.io.IOException
 import java.nio.ByteBuffer
 
+
 class VideoUtils {
     companion object {
+        private const val DEFAULT_BUFFER_SIZE = 1024 * 1024
         /**
          * @param srcPath the path of source video file.
          * @param dstPath the path of destination video file.
@@ -28,13 +28,8 @@ class VideoUtils {
          */
         @Throws(IOException::class)
         fun startTrim(
-            context: Context,
-            srcPath: Uri,
-            file: File,
-            startMs: Float,
-            endMs: Float,
-            useAudio: Boolean,
-            useVideo: Boolean,
+            srcPath: String, dstPath: String,
+            startMs: Int, endMs: Int, useAudio: Boolean, useVideo: Boolean,
             listener: Listener
         ) {
             runOnUiThread {
@@ -42,10 +37,10 @@ class VideoUtils {
             }
             // Set up MediaExtractor to read from the source.
             val extractor = MediaExtractor()
-            extractor.setDataSource(context, srcPath, null)
+            extractor.setDataSource(srcPath)
             val trackCount = extractor.trackCount
             // Set up MediaMuxer for the destination.
-            val muxer = MediaMuxer(file.absolutePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
+            val muxer = MediaMuxer(dstPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
             // Set up the tracks and retrieve the max buffer size for selected
             // tracks.
             val indexMap = HashMap<Int, Int>(trackCount)
@@ -74,10 +69,15 @@ class VideoUtils {
             }
             // Set up the orientation and starting time for extractor.
             val retrieverSrc = MediaMetadataRetriever()
-            retrieverSrc.setDataSource(context, srcPath)
+            retrieverSrc.setDataSource(srcPath)
             val degreesString = retrieverSrc.extractMetadata(
                 MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION
             )
+            try {
+                retrieverSrc.release()
+            } catch (e: IOException) {
+                // Ignore errors occurred while releasing the MediaMetadataRetriever.
+            }
             if (degreesString != null) {
                 val degrees = degreesString.toInt()
                 if (degrees >= 0) {
@@ -102,7 +102,7 @@ class VideoUtils {
                     bufferInfo.size = extractor.readSampleData(dstBuf, offset)
                     if (bufferInfo.size < 0) {
                         runOnUiThread {
-                            listener.onComplete(file)
+                            listener.onComplete(dstPath)
                         }
                         bufferInfo.size = 0
                         break
@@ -110,7 +110,7 @@ class VideoUtils {
                         bufferInfo.presentationTimeUs = extractor.sampleTime
                         if (endMs > 0 && bufferInfo.presentationTimeUs > endMs * 1000) {
                             runOnUiThread {
-                                listener.onComplete(file)
+                                listener.onComplete(dstPath)
                             }
                             break
                         } else {
@@ -121,11 +121,11 @@ class VideoUtils {
                                 bufferInfo
                             )
                             runOnUiThread {
-                                listener.onProgress((bufferInfo.presentationTimeUs / 1000 - startMs) / totalTimeMs)
+                                listener.onProgress((bufferInfo.presentationTimeUs / 1000 - startMs).toFloat() / totalTimeMs)
                             }
-                            extractor.advance()
                         }
                     }
+                    extractor.advance()
                 }
                 muxer.stop()
             } catch (e: IllegalStateException) {
@@ -142,7 +142,7 @@ class VideoUtils {
     interface Listener {
         fun onStart2()
         fun onProgress(value: Float)
-        fun onComplete(file: File)
+        fun onComplete(path: String)
         fun onError(message: String)
     }
 }

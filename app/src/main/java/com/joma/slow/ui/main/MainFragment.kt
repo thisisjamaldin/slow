@@ -3,6 +3,7 @@ package com.joma.slow.ui.main
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import com.joma.slow.R
@@ -25,7 +26,10 @@ class MainFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::infla
 
         binding.slowMoLayout.setOnClickListener {
             controller.navigate(R.id.galleryFragment)
-//            resultLauncher.launch(Intent(Intent.ACTION_GET_CONTENT).setType("video/*"))
+        }
+
+        binding.settings.setOnClickListener {
+            controller.navigate(R.id.settingsFragment)
         }
 
     }

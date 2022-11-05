@@ -1,4 +1,4 @@
-package com.joma.slow.ui.utils
+package com.joma.slow.ui.custom
 
 import android.content.Context
 import android.graphics.drawable.Drawable

@@ -22,6 +22,10 @@ class GalleryAdapter(private val listener: AdapterListener) :
         notifyDataSetChanged()
     }
 
+    fun getVideo(pos: Int): MVideo {
+        return list[pos]
+    }
+
     fun remove(pos: Int) {
         list.removeAt(pos)
         notifyItemRemoved(pos)
@@ -49,6 +53,7 @@ class GalleryAdapter(private val listener: AdapterListener) :
             params.height = context.resources.displayMetrics.widthPixels / 3 - dpToPx(context, 24)
             binding.thumbnail.layoutParams = params
             binding.duration.text = millisecondsToTime(list[pos].duration)
+            binding.root.setOnClickListener { listener.click(absoluteAdapterPosition) }
         }
     }
 }

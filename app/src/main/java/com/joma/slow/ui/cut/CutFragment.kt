@@ -1,8 +1,8 @@
 package com.joma.slow.ui.cut
 
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
@@ -10,24 +10,33 @@ import android.view.View
 import android.view.View.OnTouchListener
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.Toast
+import androidx.core.net.toUri
+import androidx.fragment.app.viewModels
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.joma.slow.R
-import com.joma.slow.databinding.FragmentCutBinding
 import com.joma.slow.base.BaseFragment
+import com.joma.slow.databinding.FragmentCutBinding
+import com.joma.slow.ui.custom.LoadingDialog
+import com.joma.slow.ui.utils.SimpleSeekBarListener
 import com.joma.slow.ui.utils.VideoUtils
+import com.joma.slow.ui.utils.millisecondsToTime
 import java.io.File
+import java.lang.Exception
 
 
 class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate),
     VideoUtils.Listener {
 
-    lateinit var file: File
     lateinit var uri: Uri
+    var duration = 0L
     var progressHandler = Handler()
     lateinit var progressRunnable: Runnable
+
+    val viewModel: CutViewModel by viewModels()
+    lateinit var loadingDialog: LoadingDialog
 
     //slider
     var fromSliderXDir = 0f
@@ -35,39 +44,25 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
     var fromSliderDestination = 0f
     var toSliderDestination = 0f
     var fromSliderOriginalPos = 0f
-    var toSliderOriginalPos =0f
+    var toSliderOriginalPos = 0f
     var minSliderValue = 0f
     var maxSliderValue = 0f
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val player = ExoPlayer.Builder(requireContext()).build()
-        binding.video.player = player
-
         uri = Uri.parse(arguments?.getString("uri"))
 
-        val progressSeekbarListener = object: OnSeekBarChangeListener{
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val seek = progress.toFloat()/200f*player.duration.toFloat()
-                player.seekTo(seek.toLong())
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-
-        }
+        val player = ExoPlayer.Builder(requireContext()).build()
+        binding.video.player = player
 
         val mediaItem = MediaItem.fromUri(uri)
         player.setMediaItem(mediaItem)
         player.prepare()
-        player.addListener(object : Player.Listener{
+        player.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 super.onIsPlayingChanged(isPlaying)
-                if (isPlaying){
+                if (isPlaying) {
                     progressHandler.post(progressRunnable)
                 } else {
                     progressHandler.removeCallbacks(progressRunnable)
@@ -76,72 +71,70 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
 
             override fun onEvents(player: Player, events: Player.Events) {
                 super.onEvents(player, events)
-                if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)){
+                if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) {
                     binding.loading.visibility = View.VISIBLE
                 }
-                if (events.contains(Player.EVENT_RENDERED_FIRST_FRAME)){
+                if (events.contains(Player.EVENT_RENDERED_FIRST_FRAME)) {
                     binding.loading.visibility = View.GONE
-                    binding.duration.text = "${player.duration}"
                 }
-//                for (a in 0 until events.size()){
-//                    Log.e("-------${events[a]}", "1")
-//                }
             }
         })
 
-        progressRunnable = Runnable {
-            val endSlider = toSliderDestination/(toSliderOriginalPos-(fromSliderOriginalPos + binding.cutFrom.width))*200
-            val progressBar = (player.currentPosition*200/player.duration).toInt()
-            if (progressBar >= endSlider){
-                player.stop()
-                progressHandler.removeCallbacks(progressRunnable)
-                return@Runnable
+        duration = arguments?.getLong("duration") ?: 0
+        binding.timelineText1.text = "00:00"
+        binding.timelineText2.text = millisecondsToTime("${duration / 5}")
+        binding.timelineText3.text = millisecondsToTime("${duration / 5 * 2}")
+        binding.timelineText4.text = millisecondsToTime("${duration / 5 * 3}")
+        binding.timelineText5.text = millisecondsToTime("${duration / 5 * 4}")
+        binding.timelineText6.text = millisecondsToTime("$duration")
+        val progressSeekbarListener = object : SimpleSeekBarListener() {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val seek = progress.toFloat() / 200f * player.duration.toFloat()
+                player.seekTo(seek.toLong())
             }
+        }
+
+        progressRunnable = Runnable {
+            val progressBar = (player.currentPosition * 200 / player.duration).toInt()
             binding.progress.setOnSeekBarChangeListener(null)
             binding.progress.progress = progressBar
             binding.progress.setOnSeekBarChangeListener(progressSeekbarListener)
             progressHandler.postDelayed(progressRunnable, 10)
         }
 
-        file = File.createTempFile("video", ".mp4", requireContext().cacheDir)
-
-        binding.video.keepScreenOn = true
+//        file = File.createTempFile("video", ".mp4", requireContext().cacheDir)
 
         binding.play.setOnClickListener {
-            if (player.isPlaying){
+            if (player.isPlaying) {
                 player.pause()
-                binding.play.setImageResource(R.drawable.ic_play)
+                binding.play.setImageResource(R.drawable.bg_play_btn)
             } else {
+                player.prepare()
                 player.play()
-                binding.play.setImageResource(R.drawable.ic_pause)
+                binding.play.setImageResource(R.drawable.bg_pause_btn)
             }
         }
 
-        view.viewTreeObserver.addOnGlobalLayoutListener(object: OnGlobalLayoutListener{
+        view.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                getViewPos()
+                getViewPosition()
                 view.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
 
-        binding.cutFrom.setOnTouchListener(object: OnTouchListener{
+        binding.cutFrom.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when(event?.action){
+                when (event?.action) {
                     MotionEvent.ACTION_DOWN -> {
                         fromSliderXDir = v?.x?.minus(event.rawX) ?: 0f
                     }
                     MotionEvent.ACTION_MOVE -> {
                         fromSliderDestination = event.rawX + fromSliderXDir
                         if (fromSliderDestination > fromSliderOriginalPos && fromSliderDestination < maxSliderValue) {
-                            v?.animate()?.x(fromSliderDestination)?.setDuration(0)?.start()
+                            v!!.animate()?.x(fromSliderDestination)?.setDuration(0)?.start()
+                            changeTimeLineLines()
                             minSliderValue = fromSliderDestination
                         }
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        val progress = binding.cutFrom.x/(toSliderOriginalPos-(fromSliderOriginalPos + binding.cutFrom.width))
-                        binding.progress.progress = (progress*200).toInt()
-                        val seek = progress*player.duration.toFloat()
-                        player.seekTo(seek.toLong())
                     }
                     else -> return false
                 }
@@ -150,9 +143,9 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
 
         })
 
-        binding.cutTo.setOnTouchListener(object: OnTouchListener{
+        binding.cutTo.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when(event?.action){
+                when (event?.action) {
                     MotionEvent.ACTION_DOWN -> {
                         toSliderXDir = v?.x?.minus(event.rawX) ?: 0f
                     }
@@ -160,11 +153,9 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
                         toSliderDestination = event.rawX + toSliderXDir
                         if (toSliderDestination < toSliderOriginalPos && toSliderDestination > minSliderValue) {
                             v?.animate()?.x(toSliderDestination)?.setDuration(0)?.start()
+                            changeTimeLineLines()
                             maxSliderValue = toSliderDestination
                         }
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        binding.red.x = binding.cutTo.x
                     }
                     else -> return false
                 }
@@ -173,22 +164,34 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
 
         })
 
+        loadingDialog = LoadingDialog(requireContext())
         binding.progress.setOnSeekBarChangeListener(progressSeekbarListener)
+        binding.next.setOnClickListener {
+            val end =
+                (binding.cutTo.x - binding.cutTo.width) / (toSliderOriginalPos - (fromSliderOriginalPos + binding.cutFrom.width)) * 200
+            val start =
+                binding.cutFrom.x / (toSliderOriginalPos - (fromSliderOriginalPos + binding.cutFrom.width)) * 200
+            loadingDialog.showLoading()
+            viewModel.cut(requireContext(), uri, duration / 200 * start, duration / 200 * end, this)
+        }
 
-//        VideoUtils.startTrim(
-//            requireContext(),
-//            uri,
-//            file.absolutePath,
-//            0,
-//            2000,
-//            useAudio = true,
-//            useVideo = true,
-//            listener = this
-//        )
-        getPreview(player.duration*1000)
+        getPreview(duration * 1000)
     }
 
-    private fun getViewPos(){
+    private fun changeTimeLineLines() {
+        val params = binding.timelineTopLine.layoutParams
+        val params2 = binding.timelineBottomLine.layoutParams
+        binding.timelineTopLine.x = binding.cutFrom.x + binding.cutFrom.width / 2
+        binding.timelineBottomLine.x = binding.cutFrom.x + binding.cutFrom.width / 2
+
+        params.width = (binding.cutTo.x - fromSliderDestination).toInt()
+        params2.width = (binding.cutTo.x - fromSliderDestination).toInt()
+
+        binding.timelineTopLine.layoutParams = params
+        binding.timelineBottomLine.layoutParams = params2
+    }
+
+    private fun getViewPosition() {
         fromSliderOriginalPos = binding.cutFrom.x
         fromSliderDestination = binding.cutFrom.x
 
@@ -199,48 +202,35 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
         minSliderValue = fromSliderOriginalPos
     }
 
-    private fun getPreview(dur: Long){
-        val retriever = MediaMetadataRetriever()
-        try {
-            retriever.setDataSource(requireContext(), uri)
-            var interval: Long = 0
-            //here 5 means frame at the 5th sec.
-            val bitmap1 = retriever.getFrameAtTime(interval)
-            binding.preview1.setImageBitmap(bitmap1)
-            interval += dur / 5
-            val bitmap2 = retriever.getFrameAtTime(interval)
-            binding.preview2.setImageBitmap(bitmap2)
-            interval += dur / 5
-            val bitmap3 = retriever.getFrameAtTime(interval)
-            binding.preview3.setImageBitmap(bitmap3)
-            interval += dur / 5
-            val bitmap4 = retriever.getFrameAtTime(interval)
-            binding.preview4.setImageBitmap(bitmap4)
-            interval += dur / 5
-            val bitmap5 = retriever.getFrameAtTime(interval)
-            binding.preview5.setImageBitmap(bitmap5)
-        } catch (ex: Exception) {
-            // Assume this is a corrupt video file
+    private fun getPreview(dur: Long) {
+        viewModel.getPreviews(requireContext(), uri, dur)
+        viewModel.previews.observe(viewLifecycleOwner) {
+            binding.preview1.setImageBitmap(it[0])
+            binding.preview2.setImageBitmap(it[1])
+            binding.preview3.setImageBitmap(it[2])
+            binding.preview4.setImageBitmap(it[3])
+            binding.preview5.setImageBitmap(it[4])
         }
     }
 
     override fun onProgress(value: Float) {
-//        Toast.makeText(requireContext(), "$value", Toast.LENGTH_SHORT).show()
+        loadingDialog.progress((value*100).toInt())
     }
 
-    override fun onComplete() {
-//        Toast.makeText(this, "Done!", Toast.LENGTH_SHORT).show()
-
-//        binding.video.setVideoPath(file.absolutePath)
-//        binding.video.start()
-//        binding.video.requestFocus()
+    override fun onComplete(path: String) {
+        val bundle = Bundle()
+        bundle.putString("path", "$path")
+        controller.navigate(R.id.slowFragment, bundle)
+        loadingDialog.hideLoading()
     }
 
     override fun onStart2() {
-//        Toast.makeText(this, "Start!", Toast.LENGTH_SHORT).show()
+        loadingDialog.showLoading()
     }
 
     override fun onError(message: String) {
-//        Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
+        loadingDialog.hideLoading()
+        Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
     }
+
 }

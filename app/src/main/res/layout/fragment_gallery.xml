@@ -6,6 +6,7 @@
 
     <ImageView
         android:id="@+id/back"
+        android:layout_margin="12dp"
         android:padding="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -17,7 +18,9 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:text="Videos"
-        android:textSize="18sp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="12dp"
+        android:textSize="@dimen/large_font_size"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/back"
@@ -29,5 +32,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
         android:layout_height="0dp" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/recycler"
+        app:layout_constraintStart_toStartOf="@id/recycler"
+        app:layout_constraintEnd_toEndOf="@id/recycler"
+        app:layout_constraintBottom_toBottomOf="@id/recycler"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

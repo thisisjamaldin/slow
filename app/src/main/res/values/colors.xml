@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="blue_200">#579BFD</color>
+    <color name="blue_200">#0169FE</color>
     <color name="blue_500">#0169FE</color>
     <color name="blue_700">#0044A6</color>
 
@@ -9,7 +9,9 @@
     <color name="red">#ED6D54</color>
     <color name="purple">#6437E3</color>
     <color name="green">#26DF9C</color>
+    <color name="grey">#454545</color>
+    <color name="light_grey">#9E9E9E</color>
     <color name="dark_grey">#121212</color>
-    <color name="transparent_grey">#80787978</color>
+    <color name="transparent_black">#4D000000</color>
     <color name="transparent">#00000000</color>
 </resources>

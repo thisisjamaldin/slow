@@ -20,4 +20,14 @@
         android:name="com.joma.slow.ui.gallery.GalleryFragment"
         android:label="GalleryFragment"
         tools:layout="@layout/fragment_gallery" />
+    <fragment
+        android:id="@+id/slowFragment"
+        android:name="com.joma.slow.ui.slow.SlowFragment"
+        android:label="SlowFragment"
+        tools:layout="@layout/fragment_slow" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.joma.slow.ui.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

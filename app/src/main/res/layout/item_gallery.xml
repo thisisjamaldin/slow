@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="2dp"
-        android:background="@color/transparent_grey"
+        android:background="@color/transparent_black"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@id/thumbnail"
         app:layout_constraintStart_toStartOf="@id/thumbnail"/>
