@@ -7,10 +7,11 @@ import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
 import android.media.MediaMuxer
 import android.net.Uri
-import java.io.IOException
-import java.nio.ByteBuffer
 import android.os.Handler
 import android.os.Looper
+import java.io.File
+import java.io.IOException
+import java.nio.ByteBuffer
 
 class VideoUtils {
     companion object {
@@ -29,9 +30,9 @@ class VideoUtils {
         fun startTrim(
             context: Context,
             srcPath: Uri,
-            dstPath: String,
-            startMs: Int,
-            endMs: Int,
+            file: File,
+            startMs: Float,
+            endMs: Float,
             useAudio: Boolean,
             useVideo: Boolean,
             listener: Listener
@@ -44,7 +45,7 @@ class VideoUtils {
             extractor.setDataSource(context, srcPath, null)
             val trackCount = extractor.trackCount
             // Set up MediaMuxer for the destination.
-            val muxer = MediaMuxer(dstPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
+            val muxer = MediaMuxer(file.absolutePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
             // Set up the tracks and retrieve the max buffer size for selected
             // tracks.
             val indexMap = HashMap<Int, Int>(trackCount)
@@ -101,7 +102,7 @@ class VideoUtils {
                     bufferInfo.size = extractor.readSampleData(dstBuf, offset)
                     if (bufferInfo.size < 0) {
                         runOnUiThread {
-                            listener.onComplete()
+                            listener.onComplete(file)
                         }
                         bufferInfo.size = 0
                         break
@@ -109,7 +110,7 @@ class VideoUtils {
                         bufferInfo.presentationTimeUs = extractor.sampleTime
                         if (endMs > 0 && bufferInfo.presentationTimeUs > endMs * 1000) {
                             runOnUiThread {
-                                listener.onComplete()
+                                listener.onComplete(file)
                             }
                             break
                         } else {
@@ -120,7 +121,7 @@ class VideoUtils {
                                 bufferInfo
                             )
                             runOnUiThread {
-                                listener.onProgress((bufferInfo.presentationTimeUs / 1000 - startMs).toFloat() / totalTimeMs)
+                                listener.onProgress((bufferInfo.presentationTimeUs / 1000 - startMs) / totalTimeMs)
                             }
                             extractor.advance()
                         }
@@ -141,7 +142,7 @@ class VideoUtils {
     interface Listener {
         fun onStart2()
         fun onProgress(value: Float)
-        fun onComplete()
+        fun onComplete(file: File)
         fun onError(message: String)
     }
 }
