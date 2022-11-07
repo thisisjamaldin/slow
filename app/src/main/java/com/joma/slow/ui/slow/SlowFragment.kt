@@ -4,6 +4,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.ImageView
@@ -27,6 +29,7 @@ class SlowFragment : BaseFragment<FragmentSlowBinding>(FragmentSlowBinding::infl
     var progressHandler = Handler()
     lateinit var progressRunnable: Runnable
     var timeLineList: MutableList<MVideo> = ArrayList()
+    var scrolling = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -54,26 +57,33 @@ class SlowFragment : BaseFragment<FragmentSlowBinding>(FragmentSlowBinding::infl
             }
         })
 
-
-        val timeLineScrollListener = ViewTreeObserver.OnScrollChangedListener {
-            val seek = binding.timelineParent.scrollX / (timeLineList.size * dpToPx(requireContext(), 80)) * player.duration.toFloat()
-            player.seekTo(seek.toLong())
-        }
-
         progressRunnable = Runnable {
             val progressBar = (player.currentPosition * (timeLineList.size * dpToPx(
                 requireContext(),
                 80
             )) / player.duration).toInt()
-
-            binding.timelineParent.scrollTo(progressBar, 0)
+            if (!scrolling) {
+                binding.timelineParent.scrollTo(progressBar, 0)
+            }
             progressHandler.postDelayed(progressRunnable, 10)
         }
 
-
-        binding.timelineParent.setOnScroll(object : View.OnScrollChangeListener{
-
-        })
+        binding.timelineParent.setOnTouchListener { v, event ->
+            when(event.action){
+                MotionEvent.ACTION_DOWN ->{
+                    scrolling = true
+                }
+                MotionEvent.ACTION_UP ->{
+                    val seek = binding.timelineParent.scrollX.toFloat() / (timeLineList.size.toFloat() * dpToPx(
+                        requireContext(),
+                        80
+                    ).toFloat()) * player.duration.toFloat()
+                    player.seekTo(seek.toLong())
+                    scrolling = false
+                }
+            }
+            false
+        }
 
         val metrics = DisplayMetrics()
         requireActivity().windowManager.defaultDisplay.getMetrics(metrics)
@@ -82,11 +92,16 @@ class SlowFragment : BaseFragment<FragmentSlowBinding>(FragmentSlowBinding::infl
         viewModel.previews.observe(viewLifecycleOwner) { list ->
             timeLineList.clear()
             timeLineList.addAll(list)
-            bindTimeLine()
+            bindTimeLineItems()
         }
     }
 
-    private fun bindTimeLine(){
+    override fun onDetach() {
+        progressHandler.removeCallbacks(progressRunnable)
+        super.onDetach()
+    }
+
+    private fun bindTimeLineItems(){
         timeLineList.forEach {
             val item = layoutInflater.inflate(R.layout.item_time_line, null)
             item.findViewById<ImageView>(R.id.thumbnail).setImageBitmap(it.thumb)
