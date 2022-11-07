@@ -1,34 +1,32 @@
 package com.joma.slow.ui.slow
 
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
-import androidx.core.net.toUri
+import android.view.ViewTreeObserver
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.joma.slow.R
 import com.joma.slow.base.BaseFragment
 import com.joma.slow.databinding.FragmentSlowBinding
 import com.joma.slow.model.MVideo
-import com.joma.slow.ui.gallery.GalleryViewModel
 import com.joma.slow.ui.utils.AdapterListener
 import com.joma.slow.ui.utils.dpToPx
-import java.io.File
+import com.joma.slow.ui.utils.millisecondsToTime
 
-class SlowFragment : BaseFragment<FragmentSlowBinding>(FragmentSlowBinding::inflate),
-    AdapterListener {
 
-    lateinit var adapter: TimeLineAdapter
+class SlowFragment : BaseFragment<FragmentSlowBinding>(FragmentSlowBinding::inflate){
+
     val viewModel: SlowViewModel by viewModels()
     var progressHandler = Handler()
     lateinit var progressRunnable: Runnable
+    var timeLineList: MutableList<MVideo> = ArrayList()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,33 +54,47 @@ class SlowFragment : BaseFragment<FragmentSlowBinding>(FragmentSlowBinding::infl
             }
         })
 
+
+        val timeLineScrollListener = ViewTreeObserver.OnScrollChangedListener {
+            val seek = binding.timelineParent.scrollX / (timeLineList.size * dpToPx(requireContext(), 80)) * player.duration.toFloat()
+            player.seekTo(seek.toLong())
+        }
+
         progressRunnable = Runnable {
-            val progressBar = (player.currentPosition * (adapter.getSize() * dpToPx(
+            val progressBar = (player.currentPosition * (timeLineList.size * dpToPx(
                 requireContext(),
                 80
             )) / player.duration).toInt()
-            Log.e("-----$progressBar", "1")
-//            binding.recycler.layoutManager?.scrollHorizontallyBy(progressBar, null, null)
+
+            binding.timelineParent.scrollTo(progressBar, 0)
             progressHandler.postDelayed(progressRunnable, 10)
         }
 
-        adapter = TimeLineAdapter(this)
-        binding.recycler.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        binding.recycler.adapter = adapter
+
+        binding.timelineParent.setOnScroll(object : View.OnScrollChangeListener{
+
+        })
 
         val metrics = DisplayMetrics()
         requireActivity().windowManager.defaultDisplay.getMetrics(metrics)
-        binding.recycler.setPadding(metrics.widthPixels / 2, 0, metrics.widthPixels / 2, 0)
+        binding.timelineParent.setPadding(metrics.widthPixels / 2, 0, metrics.widthPixels / 2, 0)
         viewModel.getPreviews(requireContext(), uri)
-        viewModel.previews.observe(viewLifecycleOwner) {
-            adapter.setList(it)
-            val w = dpToPx(requireContext(), it.size * 80)
-            Log.e("-----$w", "${it.size}")
+        viewModel.previews.observe(viewLifecycleOwner) { list ->
+            timeLineList.clear()
+            timeLineList.addAll(list)
+            bindTimeLine()
         }
     }
 
-    override fun click(pos: Int) {
-
+    private fun bindTimeLine(){
+        timeLineList.forEach {
+            val item = layoutInflater.inflate(R.layout.item_time_line, null)
+            item.findViewById<ImageView>(R.id.thumbnail).setImageBitmap(it.thumb)
+            item.findViewById<TextView>(R.id.time).text = millisecondsToTime(it.duration)
+            binding.timelineItems.addView(item)
+            val params = item.layoutParams
+            params.width = dpToPx(requireContext(), 80)
+            item.layoutParams = params
+        }
     }
 }

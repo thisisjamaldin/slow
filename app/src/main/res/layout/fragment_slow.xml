@@ -23,12 +23,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/timeline_parent"
         android:layout_width="match_parent"
         android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:scrollbars="none"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/timeline_items"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </androidx.core.widget.NestedScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
