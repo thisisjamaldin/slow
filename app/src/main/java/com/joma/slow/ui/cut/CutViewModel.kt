@@ -15,11 +15,11 @@ import java.io.File
 import java.io.FileOutputStream
 
 
-class CutViewModel: ViewModel() {
+class CutViewModel : ViewModel() {
 
     var previews: MutableLiveData<MutableList<Bitmap?>> = MutableLiveData()
 
-    fun getPreviews(context: Context, uri: Uri, dur: Long){
+    fun getPreviews(context: Context, uri: Uri, dur: Long) {
         viewModelScope.launch(Dispatchers.Default) {
             val result: MutableList<Bitmap?> = ArrayList()
             val retriever = MediaMetadataRetriever()
@@ -47,35 +47,34 @@ class CutViewModel: ViewModel() {
         }
     }
 
-    fun cut(context: Context, uri: Uri, start: Float, end: Float, listener: VideoUtils.Listener){
-//        viewModelScope.launch(Dispatchers.Default) {
+    fun cut(context: Context, uri: Uri, start: Float, end: Float, listener: VideoUtils.Listener) {
         val f = File(context.cacheDir.absolutePath + "/" + "project0.mp4")
-            f.createNewFile()
-            val in_file = context.contentResolver.openInputStream(uri)!!
-            val out = FileOutputStream(f)
-            val buf = ByteArray(1024)
-            var len: Int
-            while (in_file.read(buf).also { len = it } > 0) {
-                out.write(buf, 0, len)
-            }
-            out.close()
-            in_file.close()
+        f.createNewFile()
+        val in_file = context.contentResolver.openInputStream(uri)!!
+        val out = FileOutputStream(f)
+        val buf = ByteArray(1024)
+        var len: Int
+        while (in_file.read(buf).also { len = it } > 0) {
+            out.write(buf, 0, len)
+        }
+        out.close()
+        in_file.close()
 
         val file = File(
             context.cacheDir.absolutePath + "/" + "project.mp4"
         )
         file.createNewFile()
-
-        VideoUtils.startTrim(
-            f.absolutePath,
-            file.absolutePath,
-            start.toInt(),
-            end.toInt(),
-            useAudio = true,
-            useVideo = true,
-            listener = listener)
-
-//        }
+        viewModelScope.launch(Dispatchers.Default) {
+            VideoUtils.startTrim(
+                f.absolutePath,
+                file.absolutePath,
+                start.toInt(),
+                end.toInt(),
+                useAudio = true,
+                useVideo = true,
+                listener = listener
+            )
+        }
 
 
     }

@@ -15,6 +15,7 @@ import java.nio.ByteBuffer
 class VideoUtils {
     companion object {
         private const val DEFAULT_BUFFER_SIZE = 1024 * 1024
+
         /**
          * @param srcPath the path of source video file.
          * @param dstPath the path of destination video file.
@@ -101,17 +102,17 @@ class VideoUtils {
                     bufferInfo.offset = offset
                     bufferInfo.size = extractor.readSampleData(dstBuf, offset)
                     if (bufferInfo.size < 0) {
-                        runOnUiThread {
-                            listener.onComplete(dstPath)
-                        }
+//                        runOnUiThread {
+//                            listener.onComplete(dstPath)
+//                        }
                         bufferInfo.size = 0
                         break
                     } else {
                         bufferInfo.presentationTimeUs = extractor.sampleTime
                         if (endMs > 0 && bufferInfo.presentationTimeUs > endMs * 1000) {
-                            runOnUiThread {
-                                listener.onComplete(dstPath)
-                            }
+//                            runOnUiThread {
+//                                listener.onComplete(dstPath)
+//                            }
                             break
                         } else {
                             bufferInfo.flags = extractor.sampleFlags
@@ -134,6 +135,9 @@ class VideoUtils {
                 }
             } finally {
                 muxer.release()
+                runOnUiThread {
+                    listener.onComplete(dstPath)
+                }
             }
             return
         }

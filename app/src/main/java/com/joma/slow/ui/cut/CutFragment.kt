@@ -34,6 +34,7 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
     var duration = 0L
     var progressHandler = Handler()
     lateinit var progressRunnable: Runnable
+    lateinit var player: ExoPlayer
 
     val viewModel: CutViewModel by viewModels()
     lateinit var loadingDialog: LoadingDialog
@@ -53,7 +54,7 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
 
         uri = Uri.parse(arguments?.getString("uri"))
 
-        val player = ExoPlayer.Builder(requireContext()).build()
+        player = ExoPlayer.Builder(requireContext()).build()
         binding.video.player = player
 
         val mediaItem = MediaItem.fromUri(uri)
@@ -79,6 +80,13 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
                 }
             }
         })
+
+        binding.back.setOnClickListener {
+            player.stop()
+            player.release()
+            progressHandler.removeCallbacks(progressRunnable)
+            controller.navigateUp()
+        }
 
         duration = arguments?.getLong("duration") ?: 0
         binding.timelineText1.text = "00:00"
@@ -231,6 +239,13 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
     override fun onError(message: String) {
         loadingDialog.hideLoading()
         Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        progressHandler.removeCallbacks(progressRunnable)
+        player.stop()
+        player.release()
     }
 
 }

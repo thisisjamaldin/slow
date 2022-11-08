@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 class SlowViewModel: ViewModel() {
 
     var previews: MutableLiveData<MutableList<MVideo>> = MutableLiveData()
+    var duration: MutableLiveData<Int> = MutableLiveData()
 
     fun getPreviews(context: Context, uri: Uri){
         viewModelScope.launch(Dispatchers.Default) {
@@ -22,22 +23,29 @@ class SlowViewModel: ViewModel() {
             val retriever = MediaMetadataRetriever()
             try {
                 retriever.setDataSource(context, uri)
-                val dur = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toInt()*1000
+                var dur = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toInt()
+                duration.postValue(dur)
+                dur *= 1000
                 var interval: Long = 0
-                var bitmap = retriever.getFrameAtTime(interval)
-                result.add(MVideo(null, bitmap, "${interval/1000}"))
-                interval += dur / 5
-                bitmap = retriever.getFrameAtTime(interval)
-                result.add(MVideo(null, bitmap, "${interval/1000}"))
-                interval += dur / 5
-                bitmap = retriever.getFrameAtTime(interval)
-                result.add(MVideo(null, bitmap, "${interval/1000}"))
-                interval += dur / 5
-                bitmap = retriever.getFrameAtTime(interval)
-                result.add(MVideo(null, bitmap, "${interval/1000}"))
-                interval += dur / 5
-                bitmap = retriever.getFrameAtTime(interval)
-                result.add(MVideo(null, bitmap, "${interval/1000}"))
+                for (i in 0..dur step 4000000){
+                    val bitmap = retriever.getFrameAtTime(interval)
+                    result.add(MVideo(null, bitmap, "${interval/1000}"))
+                    interval += dur / (dur / 4000000)
+                }
+//                var bitmap = retriever.getFrameAtTime(interval)
+//                result.add(MVideo(null, bitmap, "${interval/1000}"))
+//                interval += dur / 5
+//                bitmap = retriever.getFrameAtTime(interval)
+//                result.add(MVideo(null, bitmap, "${interval/1000}"))
+//                interval += dur / 5
+//                bitmap = retriever.getFrameAtTime(interval)
+//                result.add(MVideo(null, bitmap, "${interval/1000}"))
+//                interval += dur / 5
+//                bitmap = retriever.getFrameAtTime(interval)
+//                result.add(MVideo(null, bitmap, "${interval/1000}"))
+//                interval += dur / 5
+//                bitmap = retriever.getFrameAtTime(interval)
+//                result.add(MVideo(null, bitmap, "${interval/1000}"))
             } catch (ex: Exception) {
                 // Assume this is a corrupt video file
             }

@@ -58,6 +58,4 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.9.0'
     //ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.18.1'
-
-    implementation 'com.github.a914-gowtham:android-video-trimmer:1.7.3'
 }
