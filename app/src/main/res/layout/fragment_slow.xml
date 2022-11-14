@@ -1,154 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.exoplayer2.ui.StyledPlayerView
-        android:id="@+id/video"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="24dp"
-        android:keepScreenOn="true"
-        app:use_controller="false"
-        app:layout_constraintBottom_toTopOf="@id/play"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent">
 
-    <View
-        android:id="@+id/slider"
-        android:layout_width="6dp"
-        android:layout_height="90dp"
-        android:layout_marginBottom="30dp"
-        android:background="@drawable/bg_rounded_white"
-        android:elevation="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <HorizontalScrollView
-        android:id="@+id/timeline_parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        android:clipToPadding="false"
-        android:scrollbars="none"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <LinearLayout
-            android:id="@+id/timeline_items"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" />
-    </HorizontalScrollView>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@drawable/bg_fade_gradient"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/export"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        android:text="Export"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@id/back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/back" />
-
-    <ImageView
-        android:id="@+id/back"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="12dp"
-        android:padding="16dp"
-        android:src="@drawable/ic_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <ImageView
-        android:id="@+id/play"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="60dp"
-        android:padding="4dp"
-        android:src="@drawable/bg_play_btn"
-        app:layout_constraintBottom_toTopOf="@id/slider"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/loading"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="22dp"
-        android:layout_marginBottom="58dp"
-        app:layout_constraintBottom_toTopOf="@id/slider"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_rounded_grey"
-        app:layout_constraintBottom_toBottomOf="@id/play"
-        app:layout_constraintTop_toTopOf="@id/play"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/speed_up"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:layout_marginVertical="8dp"
-            android:drawableEnd="@drawable/bg_red_plus_btn"
-            android:drawablePadding="4dp"
-            android:text="Fast" />
-
-        <TextView
-            android:id="@+id/speed_down"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:layout_marginVertical="8dp"
-            android:drawableStart="@drawable/bg_blue_plus_btn"
-            android:drawablePadding="4dp"
-            android:text="Slow" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginEnd="12dp"
-        app:layout_constraintBottom_toBottomOf="@id/play"
-        app:layout_constraintTop_toTopOf="@id/play"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/current_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawablePadding="4dp"
-            android:text="00:00" />
+        <com.google.android.exoplayer2.ui.StyledPlayerView
+            android:id="@+id/video"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="24dp"
+            android:keepScreenOn="true"
+            app:layout_constraintBottom_toTopOf="@id/play"
+            app:layout_constraintTop_toTopOf="parent"
+            app:use_controller="false" />
 
         <View
-            android:layout_width="8dp"
-            android:layout_margin="8dp"
-            android:layout_height="12dp"
-            android:background="@drawable/ic_arrow_right"/>
+            android:id="@+id/slider"
+            android:layout_width="6dp"
+            android:layout_height="90dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/bg_rounded_white"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/end_duration"
+        <com.joma.slow.ui.custom.TimeLineScrollView
+            android:id="@+id/timeline_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:clipToPadding="false"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:id="@+id/timeline_items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </com.joma.slow.ui.custom.TimeLineScrollView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@drawable/bg_fade_gradient"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/export"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawablePadding="4dp"
-            android:text="00:00" />
-    </LinearLayout>
+            android:layout_marginEnd="12dp"
+            android:text="Export"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/back" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/how_it_works"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_circle_transparent"
+            android:gravity="center"
+            android:text="@string/question_mark"
+            android:textColor="@color/blue_500"
+            app:layout_constraintBottom_toBottomOf="@id/export"
+            app:layout_constraintEnd_toStartOf="@id/export"
+            app:layout_constraintTop_toTopOf="@id/export" />
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="12dp"
+            android:padding="16dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageView
+            android:id="@+id/play"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="60dp"
+            android:padding="4dp"
+            android:src="@drawable/bg_play_btn"
+            app:layout_constraintBottom_toTopOf="@id/slider"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rounded_grey"
+            app:layout_constraintBottom_toBottomOf="@id/play"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/play">
+
+            <TextView
+                android:id="@+id/speed_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginVertical="8dp"
+                android:drawableEnd="@drawable/bg_red_plus_btn"
+                android:drawablePadding="4dp"
+                android:text="Fast" />
+
+            <TextView
+                android:id="@+id/speed_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginVertical="8dp"
+                android:drawableStart="@drawable/bg_blue_plus_btn"
+                android:drawablePadding="4dp"
+                android:text="Slow" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="@id/play"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/play">
+
+            <TextView
+                android:id="@+id/current_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="4dp"
+                android:text="00:00" />
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="12dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/ic_arrow_right" />
+
+            <TextView
+                android:id="@+id/end_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="4dp"
+                android:text="00:00" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include layout="@layout/bottom_sheet_export" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

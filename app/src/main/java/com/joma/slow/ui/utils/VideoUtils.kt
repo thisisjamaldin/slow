@@ -1,5 +1,9 @@
 package com.joma.slow.ui.utils
 
+import VideoHandle.EpEditor
+import VideoHandle.EpVideo
+import VideoHandle.OnEditorListener
+import android.content.Context
 import android.media.MediaCodec.BufferInfo
 import android.media.MediaExtractor
 import android.media.MediaFormat
@@ -8,8 +12,12 @@ import android.media.MediaMuxer
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import java.io.File
 import java.io.IOException
 import java.nio.ByteBuffer
+import java.util.*
 
 
 class VideoUtils {
@@ -29,8 +37,12 @@ class VideoUtils {
          */
         @Throws(IOException::class)
         fun startTrim(
-            srcPath: String, dstPath: String,
-            startMs: Int, endMs: Int, useAudio: Boolean, useVideo: Boolean,
+            srcPath: String,
+            dstPath: String,
+            startMs: Int,
+            endMs: Int,
+            useAudio: Boolean,
+            useVideo: Boolean,
             listener: Listener
         ) {
             runOnUiThread {
@@ -129,17 +141,46 @@ class VideoUtils {
                     extractor.advance()
                 }
                 muxer.stop()
-            } catch (e: IllegalStateException) {
-                runOnUiThread {
-                    listener.onError("The source video file is malformed")
-                }
-            } finally {
                 muxer.release()
                 runOnUiThread {
                     listener.onComplete(dstPath)
                 }
+            } catch (e: IllegalStateException) {
+                runOnUiThread {
+                    listener.onError("The source video file is malformed")
+                }
             }
             return
+        }
+
+        fun mergeVideos(context: Context, paths: List<String>): MutableLiveData<Boolean> {
+            val result = MutableLiveData<Boolean>()
+            val file = File(
+                context.cacheDir.absolutePath + "/" + "exported.mp4"
+            )
+            file.createNewFile()
+            val epVideos: ArrayList<EpVideo> = ArrayList()
+            for (p in paths) {
+                epVideos.add(EpVideo(p))
+            }
+            val outputOption: EpEditor.OutputOption = EpEditor.OutputOption(file.absolutePath)
+//            outputOption.frameRate = 25
+//            outputOption.bitRate = 10 //Default
+            EpEditor.merge(epVideos, outputOption, object : OnEditorListener {
+                override fun onSuccess() {
+                    result.postValue(true)
+                }
+
+                override fun onFailure() {
+                    Log.d("---------Status", "Failed")
+                }
+
+                override fun onProgress(progress: Float) {
+                    Log.d("----------Progress", "" + progress)
+                }
+
+            })
+            return result
         }
     }
 

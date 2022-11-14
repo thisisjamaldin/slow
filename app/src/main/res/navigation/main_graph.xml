@@ -30,4 +30,24 @@
         android:name="com.joma.slow.ui.settings.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/pickMusicFragment"
+        android:name="com.joma.slow.ui.pickMusic.PickMusicFragment"
+        android:label="PickMusicFragment"
+        tools:layout="@layout/fragment_pick_music" />
+    <fragment
+        android:id="@+id/musicFragment"
+        android:name="com.joma.slow.ui.music.MusicFragment"
+        android:label="MusicFragment"
+        tools:layout="@layout/fragment_music"/>
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.joma.slow.ui.result.ResultFragment"
+        android:label="ResultFragment"
+        tools:layout="@layout/fragment_result" />
+    <fragment
+        android:id="@+id/backgroundFragment"
+        android:name="com.joma.slow.ui.background.BackgroundFragment"
+        android:label="BackgroundFragment"
+        tools:layout="@layout/fragment_background" />
 </navigation>

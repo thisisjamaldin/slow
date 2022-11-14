@@ -48,9 +48,9 @@ class GalleryViewModel : ViewModel() {
                     }
                     val videoModel = MVideo(contentUri, vimage, duration)
                     result.add(videoModel)
+                    videos.postValue(result)
                 } while (cursor.moveToNext())
             }
-            videos.postValue(result)
         }
     }
 }

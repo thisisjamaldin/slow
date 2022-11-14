@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="24dp"
+    android:background="@color/transparent_black"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="How to use?"
+        android:textSize="@dimen/large_font_size"/>
+    <TextView
+        android:id="@+id/title1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:text="1. Click to change speed"
+        android:textSize="@dimen/medium_font_size"
+        android:layout_marginTop="42dp"/>
+    <TextView
+        android:id="@+id/speed_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:text="0.5"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/white"
+        android:background="@drawable/bg_rounded_blue"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="2dp"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/speed_text"
+        app:layout_constraintStart_toStartOf="@id/speed_text"
+        app:layout_constraintEnd_toEndOf="@id/speed_text"
+        android:src="@drawable/ic_finger"
+        android:elevation="4dp"
+        android:layout_marginTop="-4dp"/>
+
+    <ImageView
+        android:id="@+id/preview1"
+        android:layout_width="match_parent"
+        android:layout_marginTop="8dp"
+        android:layout_height="60dp"
+        app:layout_constraintTop_toBottomOf="@id/title1"
+        android:src="@drawable/time_line_preview"/>
+
+    <View
+        android:id="@+id/background"
+        android:layout_width="140dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="60dp"
+        android:background="@color/transparent_blue"
+        app:layout_constraintStart_toStartOf="@id/preview1"
+        app:layout_constraintBottom_toBottomOf="@id/preview1"
+        app:layout_constraintTop_toTopOf="@id/preview1"/>
+
+    <ImageView
+        android:id="@+id/item_start"
+        android:layout_width="24dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="@id/background"
+        app:layout_constraintBottom_toBottomOf="@id/background"
+        android:src="@drawable/bg_rounded_white"
+        android:paddingEnd="14dp"
+        android:paddingVertical="4dp"
+        app:layout_constraintStart_toStartOf="@id/background"
+        android:paddingStart="6dp"/>
+
+    <ImageView
+        android:id="@+id/item_end"
+        android:layout_width="24dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="@id/background"
+        app:layout_constraintBottom_toBottomOf="@id/background"
+        android:src="@drawable/bg_rounded_white"
+        android:paddingEnd="6dp"
+        android:paddingVertical="4dp"
+        app:layout_constraintEnd_toEndOf="@id/background"
+        android:paddingStart="14dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-0.5x"
+        app:layout_constraintStart_toStartOf="@id/background"
+        app:layout_constraintTop_toTopOf="@id/background"
+        app:layout_constraintEnd_toEndOf="@id/background"
+        app:layout_constraintBottom_toBottomOf="@id/background"/>
+
+    <TextView
+        android:id="@+id/title2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/preview1"
+        android:text="2. Double click to expand"
+        android:textSize="@dimen/medium_font_size"
+        android:layout_marginTop="42dp"/>
+
+
+    <ImageView
+        android:id="@+id/preview2"
+        android:layout_width="match_parent"
+        android:layout_marginTop="8dp"
+        android:layout_height="60dp"
+        app:layout_constraintTop_toBottomOf="@id/title2"
+        android:src="@drawable/time_line_preview"/>
+
+    <View
+        android:id="@+id/background2"
+        android:layout_width="140dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="60dp"
+        android:background="@color/transparent_blue"
+        app:layout_constraintStart_toStartOf="@id/preview2"
+        app:layout_constraintBottom_toBottomOf="@id/preview2"
+        app:layout_constraintTop_toTopOf="@id/preview2"/>
+
+    <ImageView
+        android:id="@+id/item_start2"
+        android:layout_width="24dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="@id/background2"
+        app:layout_constraintBottom_toBottomOf="@id/background2"
+        android:src="@drawable/bg_rounded_white"
+        android:paddingEnd="14dp"
+        android:paddingVertical="4dp"
+        app:layout_constraintStart_toStartOf="@id/background2"
+        android:paddingStart="6dp"/>
+
+    <ImageView
+        android:id="@+id/item_end2"
+        android:layout_width="24dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="@id/background2"
+        app:layout_constraintBottom_toBottomOf="@id/background2"
+        android:src="@drawable/bg_rounded_white"
+        android:paddingEnd="6dp"
+        android:paddingVertical="4dp"
+        app:layout_constraintEnd_toEndOf="@id/background2"
+        android:paddingStart="14dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-0.5x"
+        app:layout_constraintStart_toStartOf="@id/background2"
+        app:layout_constraintTop_toTopOf="@id/background2"
+        app:layout_constraintEnd_toEndOf="@id/background2"
+        app:layout_constraintBottom_toBottomOf="@id/background2"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_finger"
+        app:layout_constraintStart_toStartOf="@id/background2"
+        app:layout_constraintBottom_toBottomOf="@id/background2"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="-24dp"/>
+    <TextView
+        android:id="@+id/title3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/preview2"
+        android:text="3. Long click to delete"
+        android:textSize="@dimen/medium_font_size"
+        android:layout_marginTop="42dp"/>
+
+
+    <ImageView
+        android:id="@+id/preview3"
+        android:layout_width="match_parent"
+        android:layout_marginTop="8dp"
+        android:layout_height="60dp"
+        app:layout_constraintTop_toBottomOf="@id/title3"
+        android:src="@drawable/time_line_preview"/>
+
+    <View
+        android:id="@+id/background3"
+        android:layout_width="140dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="60dp"
+        android:background="@color/transparent_blue"
+        app:layout_constraintStart_toStartOf="@id/preview3"
+        app:layout_constraintBottom_toBottomOf="@id/preview3"
+        app:layout_constraintTop_toTopOf="@id/preview3"/>
+
+    <ImageView
+        android:id="@+id/item_start3"
+        android:layout_width="24dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="@id/background3"
+        app:layout_constraintBottom_toBottomOf="@id/background3"
+        android:src="@drawable/bg_rounded_white"
+        android:paddingEnd="14dp"
+        android:paddingVertical="4dp"
+        app:layout_constraintStart_toStartOf="@id/background3"
+        android:paddingStart="6dp"/>
+
+    <ImageView
+        android:id="@+id/item_end3"
+        android:layout_width="24dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="@id/background3"
+        app:layout_constraintBottom_toBottomOf="@id/background3"
+        android:src="@drawable/bg_rounded_white"
+        android:paddingEnd="6dp"
+        android:paddingVertical="4dp"
+        app:layout_constraintEnd_toEndOf="@id/background3"
+        android:paddingStart="14dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-0.5x"
+        app:layout_constraintStart_toStartOf="@id/background3"
+        app:layout_constraintTop_toTopOf="@id/background3"
+        app:layout_constraintEnd_toEndOf="@id/background3"
+        app:layout_constraintBottom_toBottomOf="@id/background3"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_finger"
+        app:layout_constraintStart_toStartOf="@id/background3"
+        app:layout_constraintBottom_toBottomOf="@id/background3"
+        app:layout_constraintEnd_toEndOf="@id/background3"
+        android:layout_marginBottom="-24dp"/>
+
+    <TextView
+        android:id="@+id/got_it"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="GOT IT"
+        android:gravity="center"
+        android:padding="12dp"
+        android:background="@drawable/bg_rounded_blue_frame"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

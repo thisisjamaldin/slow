@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import com.joma.slow.R
 import com.joma.slow.databinding.FragmentMainBinding
 import com.joma.slow.base.BaseFragment
+import com.joma.slow.model.EType
 
 class MainFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate) {
 
@@ -25,7 +27,18 @@ class MainFragment: BaseFragment<FragmentMainBinding>(FragmentMainBinding::infla
         }
 
         binding.slowMoLayout.setOnClickListener {
-            controller.navigate(R.id.galleryFragment)
+            val bundle = bundleOf("type" to EType.SPEED)
+            controller.navigate(R.id.galleryFragment, bundle)
+        }
+
+        binding.audioLayout.setOnClickListener {
+            val bundle = bundleOf("type" to EType.AUDIO)
+            controller.navigate(R.id.galleryFragment, bundle)
+        }
+
+        binding.bgLayout.setOnClickListener {
+            val bundle = bundleOf("type" to EType.BACKGROUND)
+            controller.navigate(R.id.galleryFragment, bundle)
         }
 
         binding.settings.setOnClickListener {

@@ -16,14 +16,21 @@ class GalleryAdapter(private val listener: AdapterListener) :
 
     private val list: MutableList<MVideo> = ArrayList()
 
-    fun setList(lst: List<MVideo>) {
+    fun setList(lst: Set<MVideo>) {
         this.list.clear()
         this.list.addAll(lst)
         notifyDataSetChanged()
     }
+    fun addVideo(video: MVideo) {
+        this.list.add(video)
+        notifyItemInserted(list.size)
+    }
 
     fun getVideo(pos: Int): MVideo {
         return list[pos]
+    }
+    fun getList(): List<MVideo> {
+        return list
     }
 
     fun remove(pos: Int) {

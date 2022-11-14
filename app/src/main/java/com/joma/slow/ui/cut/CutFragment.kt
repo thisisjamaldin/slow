@@ -1,9 +1,11 @@
 package com.joma.slow.ui.cut
 
+import VideoHandle.OnEditorListener
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -19,6 +21,7 @@ import com.google.android.exoplayer2.Player
 import com.joma.slow.R
 import com.joma.slow.base.BaseFragment
 import com.joma.slow.databinding.FragmentCutBinding
+import com.joma.slow.model.EType
 import com.joma.slow.ui.custom.LoadingDialog
 import com.joma.slow.ui.utils.SimpleSeekBarListener
 import com.joma.slow.ui.utils.VideoUtils
@@ -31,13 +34,13 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
     VideoUtils.Listener {
 
     lateinit var uri: Uri
+    lateinit var type: EType
     var duration = 0L
     var progressHandler = Handler()
     lateinit var progressRunnable: Runnable
     lateinit var player: ExoPlayer
 
     val viewModel: CutViewModel by viewModels()
-    lateinit var loadingDialog: LoadingDialog
 
     //slider
     var fromSliderXDir = 0f
@@ -49,10 +52,12 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
     var minSliderValue = 0f
     var maxSliderValue = 0f
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         uri = Uri.parse(arguments?.getString("uri"))
+        type = arguments?.get("type") as EType
 
         player = ExoPlayer.Builder(requireContext()).build()
         binding.video.player = player
@@ -138,7 +143,7 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
                     }
                     MotionEvent.ACTION_MOVE -> {
                         fromSliderDestination = event.rawX + fromSliderXDir
-                        if (fromSliderDestination > fromSliderOriginalPos && fromSliderDestination < maxSliderValue) {
+                        if (fromSliderDestination > fromSliderOriginalPos && fromSliderDestination < maxSliderValue - 100) {
                             v!!.animate()?.x(fromSliderDestination)?.setDuration(0)?.start()
                             changeTimeLineLines()
                             minSliderValue = fromSliderDestination
@@ -159,7 +164,7 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
                     }
                     MotionEvent.ACTION_MOVE -> {
                         toSliderDestination = event.rawX + toSliderXDir
-                        if (toSliderDestination < toSliderOriginalPos && toSliderDestination > minSliderValue) {
+                        if (toSliderDestination < toSliderOriginalPos && toSliderDestination > minSliderValue + 100) {
                             v?.animate()?.x(toSliderDestination)?.setDuration(0)?.start()
                             changeTimeLineLines()
                             maxSliderValue = toSliderDestination
@@ -172,15 +177,27 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
 
         })
 
-        loadingDialog = LoadingDialog(requireContext())
+
         binding.progress.setOnSeekBarChangeListener(progressSeekbarListener)
         binding.next.setOnClickListener {
-            val end =
+            var end =
                 (binding.cutTo.x - binding.cutTo.width) / (toSliderOriginalPos - (fromSliderOriginalPos + binding.cutFrom.width)) * 200
-            val start =
+            var start =
                 binding.cutFrom.x / (toSliderOriginalPos - (fromSliderOriginalPos + binding.cutFrom.width)) * 200
             loadingDialog.showLoading()
-            viewModel.cut(requireContext(), uri, duration / 200 * start, duration / 200 * end, this)
+            if (binding.cutFrom.x == fromSliderOriginalPos) {
+                start = -1f
+            }
+            if (binding.cutTo.x == toSliderOriginalPos) {
+                end = -1f
+            }
+            viewModel.cut(
+                requireContext(),
+                uri,
+                duration / 200 * start,
+                (duration / 200 * end),
+                this
+            )
         }
 
         getPreview(duration * 1000)
@@ -222,23 +239,37 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
     }
 
     override fun onProgress(value: Float) {
-        loadingDialog.progress((value*100).toInt())
+        Log.e("--------234234", "$value")
+        loadingDialog.progress((value * 100).toInt())
     }
 
     override fun onComplete(path: String) {
         val bundle = Bundle()
         bundle.putString("path", "$path")
-        controller.navigate(R.id.slowFragment, bundle)
+        when (type) {
+            EType.SPEED ->
+                controller.navigate(R.id.slowFragment, bundle)
+            EType.AUDIO ->
+                controller.navigate(R.id.musicFragment, bundle)
+            EType.CURVE ->
+                controller.navigate(R.id.musicFragment, bundle)
+            EType.BACKGROUND ->
+                controller.navigate(R.id.backgroundFragment, bundle)
+        }
         loadingDialog.hideLoading()
+        player.stop()
+        player.release()
     }
 
     override fun onStart2() {
-        loadingDialog.showLoading()
+
     }
 
     override fun onError(message: String) {
         loadingDialog.hideLoading()
         Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+        player.stop()
+        player.release()
     }
 
     override fun onDetach() {
@@ -246,6 +277,7 @@ class CutFragment : BaseFragment<FragmentCutBinding>(FragmentCutBinding::inflate
         progressHandler.removeCallbacks(progressRunnable)
         player.stop()
         player.release()
+        loadingDialog.hideLoading()
     }
 
 }

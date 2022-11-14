@@ -57,7 +57,6 @@
         android:keepScreenOn="true"
         app:show_timeout="0"
         app:use_controller="false"
-        app:bar_gravity="center"
         app:layout_constraintBottom_toTopOf="@id/play"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="24dp"
@@ -231,7 +230,7 @@
             android:layout_width="6dp"
             android:layout_height="6dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_circle_grey"/>
+            android:background="@drawable/bg_grey_dot"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -240,7 +239,7 @@
             android:layout_width="6dp"
             android:layout_height="6dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_circle_grey"/>
+            android:background="@drawable/bg_grey_dot"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -257,7 +256,7 @@
             android:layout_width="6dp"
             android:layout_height="6dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_circle_grey"/>
+            android:background="@drawable/bg_grey_dot"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -266,7 +265,7 @@
             android:layout_width="6dp"
             android:layout_height="6dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_circle_grey"/>
+            android:background="@drawable/bg_grey_dot"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -283,7 +282,7 @@
             android:layout_width="6dp"
             android:layout_height="6dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_circle_grey"/>
+            android:background="@drawable/bg_grey_dot"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -292,7 +291,7 @@
             android:layout_width="6dp"
             android:layout_height="6dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_circle_grey"/>
+            android:background="@drawable/bg_grey_dot"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -309,7 +308,7 @@
             android:layout_width="6dp"
             android:layout_height="6dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_circle_grey"/>
+            android:background="@drawable/bg_grey_dot"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -318,7 +317,7 @@
             android:layout_width="6dp"
             android:layout_height="6dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_circle_grey"/>
+            android:background="@drawable/bg_grey_dot"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -335,7 +334,7 @@
             android:layout_width="6dp"
             android:layout_height="6dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_circle_grey"/>
+            android:background="@drawable/bg_grey_dot"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -344,7 +343,7 @@
             android:layout_width="6dp"
             android:layout_height="6dp"
             android:layout_gravity="center"
-            android:background="@drawable/bg_circle_grey"/>
+            android:background="@drawable/bg_grey_dot"/>
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"

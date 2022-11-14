@@ -1,6 +1,5 @@
 package com.joma.slow.ui.cut
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
@@ -75,7 +74,5 @@ class CutViewModel : ViewModel() {
                 listener = listener
             )
         }
-
-
     }
 }

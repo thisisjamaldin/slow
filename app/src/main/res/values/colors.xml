@@ -12,7 +12,7 @@
     <color name="grey">#454545</color>
     <color name="light_grey">#9E9E9E</color>
     <color name="dark_grey">#121212</color>
-    <color name="transparent_black">#4D000000</color>
+    <color name="transparent_black">#CC000000</color>
     <color name="transparent_blue">#B20169FE</color>
     <color name="transparent_red">#B2ED6D54</color>
     <color name="transparent">#00000000</color>

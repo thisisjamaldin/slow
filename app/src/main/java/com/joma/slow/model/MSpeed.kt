@@ -6,5 +6,5 @@ data class MSpeed(
     var view: View,
     var width: Int,
     var positionOnTimeLine: Int,
-    var speedUp: Boolean
+    var speed: Float
 )

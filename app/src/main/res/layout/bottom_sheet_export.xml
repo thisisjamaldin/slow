@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/bottom_sheet_export_root"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_bottom_sheet"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="@dimen/large_font_size"
+        android:layout_marginTop="12dp"
+        android:text="Choose an export size"/>
+
+    <TextView
+        android:id="@+id/ultra_hd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2K Ultra HD"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:background="@drawable/bg_rounded_blue"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="24dp"
+        android:padding="12dp"
+        android:gravity="center"/>
+    <TextView
+        android:id="@+id/full_hd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1080P Full HD"
+        app:layout_constraintTop_toBottomOf="@id/ultra_hd"
+        android:background="@drawable/bg_rounded_blue_frame"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="24dp"
+        android:padding="12dp"
+        android:gravity="center"/>
+    <TextView
+        android:id="@+id/hd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="720P HD"
+        app:layout_constraintTop_toBottomOf="@id/full_hd"
+        android:background="@drawable/bg_rounded_blue_frame"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginVertical="24dp"
+        android:padding="12dp"
+        android:gravity="center"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

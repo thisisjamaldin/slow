@@ -9,7 +9,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.joma.slow.R
 
-class LoadingDialog (context: Context) {
+class LoadingDialog(context: Context) {
 
     private var dialog: Dialog = Dialog(context)
     private var textView: TextView
@@ -24,13 +24,19 @@ class LoadingDialog (context: Context) {
         process = dialog.findViewById(R.id.dialog_loading)
     }
 
-    fun showLoading(){
+    fun showLoading() {
         dialog.show()
     }
 
     fun progress(v: Int) {
-        textView.text = "${if (v>0) v else 0}%"
-        process.progress = v
+        var p = v
+        if (p < 0) {
+            p *= -1
+        } else if (p > 97) {
+            p = 100
+        }
+        textView.text = "$p%"
+        process.progress = p
     }
 
     fun hideLoading() {
